@@ -1,0 +1,140 @@
+/* Estilos para el componente ParcelasList */
+.parcelas-list-container {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: rgba(235, 232, 181, 0.4);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Tabla de parcelas */
+.parcelas-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Encabezado de la tabla */
+.parcelas-list-header {
+  background-color: rgba(28, 28, 23, 0.1);
+}
+
+.parcelas-list-header-row {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.parcelas-list-header-cell {
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Cuerpo de la tabla */
+.parcelas-list-body {
+  color: var(--text-secondary);
+}
+
+.parcelas-list-row {
+  transition: background-color var(--transition-fast);
+  border-bottom: 1px solid rgba(148, 16, 16, 0.05);
+}
+
+.parcelas-list-row:last-child {
+  border-bottom: none;
+}
+
+.parcelas-list-row:hover {
+  background-color: rgba(233, 250, 178, 0.05);
+}
+
+.parcelas-list-cell {
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* Estilos específicos para cada tipo de celda */
+.parcelas-list-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.parcelas-list-responsable {
+  color: var(--text-secondary);
+}
+
+.parcelas-list-ubicacion {
+  color: var(--text-secondary);
+}
+
+.parcelas-list-tipo-cultivo {
+  color: var(--text-secondary);
+}
+
+.parcelas-list-date {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Estado vacío */
+.parcelas-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.parcelas-list-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+  color: var(--text-secondary);
+}
+
+.parcelas-list-empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.parcelas-list-empty-text {
+  max-width: 400px;
+  color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .parcelas-list-container {
+    overflow-x: auto;
+  }
+
+  .parcelas-list-table {
+    min-width: 600px;
+  }
+
+  .parcelas-list-header-cell,
+  .parcelas-list-cell {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .parcelas-list-empty-icon {
+    font-size: 2.5rem;
+  }
+
+  .parcelas-list-empty-title {
+    font-size: 1.1rem;
+  }
+
+  .parcelas-list-empty-text {
+    font-size: 0.9rem;
+  }
+}
+

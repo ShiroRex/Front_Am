@@ -1,0 +1,26 @@
+/* Asegúrate de mantener todo tu CSS original y solo añadir estos estilos */
+
+.header-container {
+  background-color: #F1E5B9;
+  color: #0b0b0b;
+  padding: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-icon {
+  width: 24px;
+  height: 24px;
+  color: #4ecdc4; /* Color turquesa para que coincida con el texto */
+}
+

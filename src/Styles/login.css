@@ -1,0 +1,183 @@
+/* Estilos base para el contenedor de login */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/barley-1117282_1280.jpg-HuCl8BE0qel8o4nFGYvPvH9N1h9daQ.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+.login-content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Estilos para el logo */
+.login-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.plant-icon {
+  color: #4a8f3e;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Estilos para el título */
+.login-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+/* Elimino la línea verde debajo del título */
+/* .login-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(to right, #4a8f3e, #8bc34a);
+  border-radius: 3px;
+} */
+
+/* Estilos para el formulario */
+.login-form {
+  margin-top: 1.5rem;
+}
+
+.login-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.login-form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.login-form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form-input:focus {
+  outline: none;
+  border-color: #4a8f3e;
+  box-shadow: 0 0 0 2px rgba(74, 143, 62, 0.2);
+}
+
+/* Estilos para el botón de envío - cambio el color al mismo del logo */
+.login-submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background: #f7e305;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.login-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 143, 62, 0.3);
+}
+
+.login-submit-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estilos para mensajes de error */
+.login-error-message {
+  color: #e53935;
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(229, 57, 53, 0.1);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* Estilos para el texto de redirección - cambio el color del enlace */
+.login-redirect-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.login-redirect-link {
+  color: #f7e305;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.login-redirect-link:hover {
+  color: #f7e305;
+  text-decoration: underline;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media queries para responsividad */
+@media (max-width: 576px) {
+  .login-content {
+    padding: 1.5rem;
+    max-width: 90%;
+    margin: 0 1rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+}
+
