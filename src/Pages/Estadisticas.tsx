@@ -1,21 +1,22 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
 import Sidebar from "../Components/Sidebar/Sidebar"
 import Header from "../Components/Header/Header"
 import Footer from "../Components/Footer/Footer"
 import CombinedCharts from "../Components/Graficos/Charts"
 import { Info } from "lucide-react"
 import "../Styles/Estadisticas.css"
+import { fetchAllData } from "../services/api"
 
 interface HistoricalData {
   id: number
+  parcela_id: number
+  fecha_registro: string
   temperatura: number
   humedad: number
   lluvia: number
   sol: number
-  fecha: string
 }
 
 const StatisticsPage = () => {
@@ -28,6 +29,8 @@ const StatisticsPage = () => {
     id: null,
     text: "",
   })
+  // Estado para controlar cuántos registros mostrar
+  const [recordsToShow, setRecordsToShow] = useState<number>(10)
 
   useEffect(() => {
     const fetchHistoricalData = async () => {
@@ -35,8 +38,18 @@ const StatisticsPage = () => {
         setLoading(true)
         setError(null)
 
-        const response = await axios.get("http://localhost:3001/datos-generales")
-        setHistoricalData(response.data)
+        // Obtener todos los datos desde el nuevo endpoint
+        const allData = await fetchAllData()
+
+        // Extraer datos históricos
+        if (allData.historico) {
+          console.log("Datos históricos obtenidos:", allData.historico.length)
+          setHistoricalData(allData.historico)
+        } else {
+          console.error("No se encontraron datos históricos en la respuesta")
+          setHistoricalData([])
+        }
+
         setLastUpdate(new Date().toLocaleTimeString())
       } catch (err) {
         setError("Error al cargar datos históricos")
@@ -62,11 +75,19 @@ const StatisticsPage = () => {
       }
     }
 
-    // Ordenar por fecha
-    const sortedData = [...historicalData].sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+    // Ordenar por fecha (más reciente primero)
+    const sortedData = [...historicalData].sort(
+      (a, b) => new Date(b.fecha_registro).getTime() - new Date(a.fecha_registro).getTime(),
+    )
 
-    const labels = sortedData.map((item) =>
-      new Date(item.fecha).toLocaleDateString("es-ES", {
+    // Tomar solo los últimos N registros (los más recientes)
+    const limitedData = sortedData.slice(0, recordsToShow)
+
+    // Invertir para mostrar en orden cronológico (más antiguo primero)
+    const chronologicalData = [...limitedData].reverse()
+
+    const labels = chronologicalData.map((item) =>
+      new Date(item.fecha_registro).toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "short",
         hour: "2-digit",
@@ -76,10 +97,10 @@ const StatisticsPage = () => {
 
     return {
       labels,
-      temperatureData: sortedData.map((item) => item.temperatura),
-      humidityData: sortedData.map((item) => item.humedad),
-      rainData: sortedData.map((item) => item.lluvia),
-      sunData: sortedData.map((item) => item.sol),
+      temperatureData: chronologicalData.map((item) => Number(item.temperatura)),
+      humidityData: chronologicalData.map((item) => Number(item.humedad)),
+      rainData: chronologicalData.map((item) => Number(item.lluvia)),
+      sunData: chronologicalData.map((item) => Number(item.sol)),
     }
   }
 
@@ -89,6 +110,11 @@ const StatisticsPage = () => {
     } else {
       setTooltipInfo({ visible: true, id, text })
     }
+  }
+
+  // Función para cambiar la cantidad de registros a mostrar
+  const handleRecordsChange = (amount: number) => {
+    setRecordsToShow(amount)
   }
 
   const { labels, temperatureData, humidityData, rainData, sunData } = processData()
@@ -143,12 +169,45 @@ const StatisticsPage = () => {
   const currentAvgRain = rainData.length ? rainData.reduce((a, b) => a + b, 0) / rainData.length : 0
   const currentAvgSun = sunData.length ? sunData.reduce((a, b) => a + b, 0) / sunData.length : 0
 
-  // Valores de referencia (podrían ser promedios históricos o valores ideales)
-  const referenceTemp = 25 // Temperatura ideal de referencia
-  const referenceHum = 60 // Humedad ideal de referencia
-  const referenceRain = 5 // Lluvia promedio de referencia
-  const referenceSun = 500 // Intensidad solar promedio de referencia
+  // Valores máximos para cada variable (podrían ser valores ideales o límites físicos)
+  const maxTemp = 40 // Temperatura máxima en °C
+  const maxHum = 100 // Humedad máxima en %
+  const maxRain = 50 // Lluvia máxima en mm
+  const maxSun = 100 // Intensidad solar máxima en lux (ajustado a la escala)
 
+  // Datos para el gráfico de área polar
+  const polarAreaData = {
+    labels: ["Temperatura (°C)", "Humedad (%)", "Lluvia (mm)", "Intensidad Solar (lux)"],
+    datasets: [
+      {
+        data: [
+          // Convertimos a porcentajes para normalizar la visualización
+          Number.parseFloat(((currentAvgTemp / maxTemp) * 100).toFixed(1)),
+          Number.parseFloat(((currentAvgHum / maxHum) * 100).toFixed(1)),
+          Number.parseFloat(((currentAvgRain / maxRain) * 100).toFixed(1)),
+          Number.parseFloat(((currentAvgSun / maxSun) * 100).toFixed(1)),
+        ],
+        backgroundColor: [
+          "rgba(234, 84, 85, 0.7)", // Rojo para temperatura
+          "rgba(0, 123, 255, 0.7)", // Azul para humedad
+          "rgba(40, 167, 69, 0.7)", // Verde para lluvia
+          "rgba(255, 193, 7, 0.7)", // Amarillo para intensidad solar
+        ],
+        borderColor: ["rgba(234, 84, 85, 1)", "rgba(0, 123, 255, 1)", "rgba(40, 167, 69, 1)", "rgba(255, 193, 7, 1)"],
+        borderWidth: 1,
+        // Valores originales y máximos para mostrar en la leyenda y tooltips
+        maxValues: [maxTemp, maxHum, maxRain, maxSun],
+        originalValues: [
+          Number.parseFloat(currentAvgTemp.toFixed(1)),
+          Number.parseFloat(currentAvgHum.toFixed(1)),
+          Number.parseFloat(currentAvgRain.toFixed(1)),
+          Number.parseFloat(currentAvgSun.toFixed(1)),
+        ],
+      },
+    ],
+  }
+
+  // Datos para el gráfico de radar (mantenemos por si se quiere volver a usar)
   const radarChartData = {
     labels: ["Temperatura (°C)", "Humedad (%)", "Lluvia (mm)", "Intensidad Solar (lux)"],
     datasets: [
@@ -165,7 +224,7 @@ const StatisticsPage = () => {
       },
       {
         label: "Valores de Referencia",
-        data: [referenceTemp, referenceHum, referenceRain, referenceSun],
+        data: [25, 60, 5, 50], // Valores de referencia
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 2,
@@ -186,7 +245,6 @@ const StatisticsPage = () => {
 
         <main className="dashboard-content">
           <div className="statistics-container">
-            {/* Añado el título y subtítulo aquí */}
             <div className="estadisticas-header">
               <h1 className="estadisticas-title">Estadísticas</h1>
               <p className="estadisticas-description">Análisis detallado representado por graficos</p>
@@ -208,6 +266,40 @@ const StatisticsPage = () => {
               </div>
             ) : (
               <>
+                <div className="chart-controls">
+                  <div className="records-selector">
+                    <span>Mostrar últimos: </span>
+                    <div className="records-buttons">
+                      <button className={recordsToShow === 10 ? "active" : ""} onClick={() => handleRecordsChange(10)}>
+                        10
+                      </button>
+                      <button className={recordsToShow === 20 ? "active" : ""} onClick={() => handleRecordsChange(20)}>
+                        20
+                      </button>
+                      <button className={recordsToShow === 50 ? "active" : ""} onClick={() => handleRecordsChange(50)}>
+                        50
+                      </button>
+                      <button
+                        className={recordsToShow === 100 ? "active" : ""}
+                        onClick={() => handleRecordsChange(100)}
+                      >
+                        100
+                      </button>
+                      <button
+                        className={recordsToShow === historicalData.length ? "active" : ""}
+                        onClick={() => handleRecordsChange(historicalData.length)}
+                      >
+                        Todos
+                      </button>
+                    </div>
+                  </div>
+                  <div className="data-info">
+                    <span>
+                      Mostrando {Math.min(recordsToShow, historicalData.length)} de {historicalData.length} registros
+                    </span>
+                  </div>
+                </div>
+
                 <div className="charts-grid">
                   <div className="chart-card">
                     <div className="chart-header">
@@ -280,27 +372,26 @@ const StatisticsPage = () => {
                   <div className="chart-card full-width">
                     <div className="chart-header">
                       <div className="chart-title-container">
-                        <h3>Comparativa de Variables Climáticas</h3>
+                        <h3>Niveles Actuales vs. Máximos</h3>
                         <button
                           className="info-button"
                           onClick={() =>
                             handleInfoClick(
-                              "radar",
-                              "Este gráfico radar compara los valores actuales de temperatura, humedad, lluvia e intensidad solar con los valores de referencia ideales para el cultivo.",
+                              "polar-area",
+                              "Este gráfico muestra los valores actuales de cada variable climática en relación con sus valores máximos. Cada sector representa el porcentaje del valor máximo alcanzado por cada variable.",
                             )
                           }
                           aria-label="Información sobre el gráfico"
                         >
                           <Info size={18} />
                         </button>
-                        {tooltipInfo.visible && tooltipInfo.id === "radar" && (
+                        {tooltipInfo.visible && tooltipInfo.id === "polar-area" && (
                           <div className="info-tooltip">{tooltipInfo.text}</div>
                         )}
                       </div>
-                     
                     </div>
-                    <div className="chart-wrapper">
-                      <CombinedCharts.Radar data={radarChartData} />
+                    <div className="chart-wrapper polar-chart-wrapper">
+                      <CombinedCharts.PolarArea data={polarAreaData} />
                     </div>
                   </div>
                 </div>

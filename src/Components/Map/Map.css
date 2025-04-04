@@ -2,12 +2,12 @@
 .iot-map {
   width: 100%;
   height: 100%;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 8px);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-subtle, #e2e8f0);
   position: relative;
-  z-index: var(--z-base);
+  z-index: var(--z-base, 1);
 }
 
 /* Asegurarse de que el mapa ocupe todo el espacio disponible */
@@ -19,22 +19,21 @@
 
 /* Efecto de borde brillante */
 .iot-map::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px var(--border-subtle), 
-              inset 0 0 0 2px rgba(13, 211, 224, 0.1);
-  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px var(--border-subtle, #e2e8f0), inset 0 0 0 2px rgba(13, 211, 224, 0.1);
+  border-radius: var(--radius-lg, 8px);
   z-index: 10;
 }
 
 /* Overlay para dar un tono al mapa que combine con el tema */
 .iot-map::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -55,41 +54,41 @@
 .mapboxgl-popup {
   max-width: 220px;
   filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
-  z-index: var(--z-popover);
+  z-index: var(--z-popover, 1000);
 }
 
 .mapboxgl-popup-content {
   padding: 1rem 1.25rem;
-  border-radius: var(--radius-md);
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  border-radius: var(--radius-md, 6px);
+  font-family: "Inter", "Segoe UI", sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-subtle);
-  background-color: var(--bg-card);
-  color: var(--text-primary);
+  box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  background-color: var(--bg-card, white);
+  color: var(--text-primary, #1a202c);
   position: relative;
 }
 
 .mapboxgl-popup-content::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(to right, var(--accent-teal), transparent);
+  background: linear-gradient(to right, var(--accent-teal, #0dd3e0), transparent);
 }
 
 .mapboxgl-popup-close-button {
-  color: var(--text-secondary);
+  color: var(--text-secondary, #4a5568);
   font-size: 1.25rem;
   padding: 0.25rem;
   transition: color 0.2s ease;
 }
 
 .mapboxgl-popup-close-button:hover {
-  color: var(--accent-teal);
+  color: var(--accent-teal, #0dd3e0);
   background: none;
 }
 
@@ -122,15 +121,15 @@
 
 /* Estilo para los controles de zoom */
 .mapboxgl-ctrl-group {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  background-color: var(--bg-card, white);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: var(--radius-md, 6px);
   overflow: hidden;
 }
 
 .mapboxgl-ctrl-group button {
-  background-color: var(--bg-card);
-  color: var(--text-primary);
+  background-color: var(--bg-card, white);
+  color: var(--text-primary, #1a202c);
   border: none;
   width: 30px;
   height: 30px;
@@ -156,7 +155,7 @@
   justify-content: center;
   background-color: rgba(26, 35, 50, 0.7);
   z-index: 15;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 8px);
 }
 
 .iot-map-loading-spinner {
@@ -164,7 +163,7 @@
   height: 40px;
   border: 3px solid rgba(13, 211, 224, 0.3);
   border-radius: 50%;
-  border-top-color: var(--accent-teal);
+  border-top-color: var(--accent-teal, #0dd3e0);
   animation: spin 1s linear infinite;
 }
 
@@ -180,30 +179,30 @@
   justify-content: center;
   background-color: rgba(26, 35, 50, 0.9);
   z-index: 15;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 8px);
   padding: 1.5rem;
   text-align: center;
 }
 
 .iot-map-error-icon {
   font-size: 2.5rem;
-  color: var(--error);
+  color: var(--error, #e53e3e);
   margin-bottom: 1rem;
 }
 
 .iot-map-error-message {
-  color: var(--text-primary);
+  color: var(--text-primary, white);
   margin-bottom: 1rem;
 }
 
 .iot-map-error-button {
-  background-color: var(--error);
+  background-color: var(--error, #e53e3e);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm, 4px);
   font-weight: 500;
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast, 0.2s ease);
 }
 
 .iot-map-error-button:hover {
@@ -211,7 +210,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */
@@ -219,11 +220,11 @@
   #map {
     min-height: 250px;
   }
-  
+
   .mapboxgl-popup {
     max-width: 200px;
   }
-  
+
   .mapboxgl-popup-content {
     padding: 0.75rem 1rem;
     font-size: 0.8rem;
@@ -234,17 +235,10 @@
   #map {
     min-height: 200px;
   }
-  
+
   .mapboxgl-popup {
     max-width: 180px;
   }
-}
-
-.iot-map {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  position: relative;
 }
 
 .no-parcelas-message {
@@ -258,15 +252,6 @@
   border-radius: 4px;
   font-size: 14px;
   z-index: 10;
-}
-
-.mapboxgl-popup {
-  max-width: 300px;
-}
-
-.mapboxgl-popup-content {
-  padding: 15px;
-  border-radius: 8px;
 }
 
 .mapboxgl-popup-content h3 {

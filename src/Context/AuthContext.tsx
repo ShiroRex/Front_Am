@@ -1,75 +1,82 @@
-"use client"
-
-import type React from "react"
-import { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { isAuthenticated, logout, getCurrentUser } from '../Services/api';
 
 interface AuthContextType {
-  isAuthenticated: boolean
-  login: (token: string) => void
-  logout: () => void
+  isAuthenticated: boolean;
+  user: any | null;
+  login: (token: string) => void;
+  logout: () => void;
+  loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  user: null,
+  login: () => {},
+  logout: () => {},
+  loading: true
+});
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-  const [isInitialized, setIsInitialized] = useState<boolean>(false)
+export const useAuth = () => useContext(AuthContext);
 
-  // Verificar token al cargar la aplicación
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = useState<boolean>(false);
+
+  // Verificar autenticación al cargar
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("token")
-      setIsAuthenticated(!!token)
-      setIsInitialized(true)
-    }
+    const checkAuth = async () => {
+      const auth = isAuthenticated();
+      setAuthState(auth);
+      
+      if (auth) {
+        try {
+          const userData = await getCurrentUser();
+          setUser(userData.user);
+        } catch (error) {
+          console.error('Error al obtener datos del usuario:', error);
+          handleLogout();
+        }
+      }
+      
+      setLoading(false);
+    };
+    
+    checkAuth();
+  }, []);
 
-    checkAuth()
+  const handleLogin = (token: string) => {
+    localStorage.setItem('token', token);
+    setAuthState(true);
+    
+    // Obtener información del usuario después de login
+    getCurrentUser()
+      .then(userData => {
+        setUser(userData.user);
+      })
+      .catch(error => {
+        console.error('Error al obtener datos del usuario después de login:', error);
+      });
+  };
 
-    // Escuchar cambios en localStorage (por si se modifica en otra pestaña)
-    window.addEventListener("storage", checkAuth)
+  const handleLogout = () => {
+    logout();
+    setAuthState(false);
+    setUser(null);
+  };
 
-    return () => {
-      window.removeEventListener("storage", checkAuth)
-    }
-  }, [])
+  const value = {
+    isAuthenticated: authState,
+    user,
+    login: handleLogin,
+    logout: handleLogout,
+    loading
+  };
 
-  const login = (token: string) => {
-    localStorage.setItem("token", token)
-    setIsAuthenticated(true)
-  }
-
-  const logout = () => {
-    localStorage.removeItem("token")
-    setIsAuthenticated(false)
-    window.location.href = "/"
-  }
-
-  // Mostrar un loader mientras se inicializa
-  if (!isInitialized) {
-    return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <div
-          style={{
-            border: "4px solid #f3f3f3",
-            borderTop: "4px solid #3498db",
-            borderRadius: "50%",
-            width: "30px",
-            height: "30px",
-            animation: "spin 1s linear infinite",
-          }}
-        ></div>
-      </div>
-    )
-  }
-
-  return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>
-}
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error("useAuth debe ser usado dentro de un AuthProvider")
-  }
-  return context
-}
-
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

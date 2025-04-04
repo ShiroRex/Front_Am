@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
 import Sidebar from "../Components/Sidebar/Sidebar"
 import Header from "../Components/Header/Header"
 import Footer from "../Components/Footer/Footer"
 import Card from "../Components/Cards/Card"
 import Map from "../Components/Map/Map"
 import "../Styles/Dashboard.css"
+import { fetchAllData, fetchDatosGenerales } from "../services/api"
 
 interface SensorData {
   temperatura: number
@@ -26,12 +26,11 @@ interface Parcela {
   tipo_cultivo: string
   responsable: string
   ultimo_riego: string
-  eliminada?: boolean
+  is_deleted: number
 }
 
 const Dashboard = () => {
   const [parcelas, setParcelas] = useState<Parcela[]>([])
-  const [parcelasEliminadas, setParcelasEliminadas] = useState<Parcela[]>([])
   const [sensorData, setSensorData] = useState<SensorData>({
     temperatura: 0,
     humedad: 0,
@@ -47,48 +46,39 @@ const Dashboard = () => {
       setIsLoading(true)
       setError(null)
 
-      // 1. Obtener datos de la API externa (todas las parcelas)
-      const externalApiRes = await axios.get("https://moriahmkt.com/iotapp/updated/")
-      console.log("Datos de API externa:", externalApiRes.data)
+      // Obtener todos los datos desde el nuevo endpoint /api/dump
+      const allData = await fetchAllData()
+      console.log("Datos completos:", allData)
 
-      // Extraer parcelas de la API externa
-      const parcelasExternas = externalApiRes.data.parcelas || []
+      // Extraer parcelas
+      if (allData.parcelas) {
+        setParcelas(allData.parcelas)
+      }
 
-      // 2. Obtener parcelas eliminadas de la API local
-      const parcelasEliminadasRes = await axios.get("http://localhost:3001/parcelas/eliminadas")
-      console.log("Parcelas eliminadas:", parcelasEliminadasRes.data)
+      // Obtener datos de sensores usando la función actualizada
+      const sensorDataRes = await fetchDatosGenerales()
+      console.log("Datos de sensores:", sensorDataRes)
 
-      // Guardar parcelas eliminadas
-      setParcelasEliminadas(parcelasEliminadasRes.data)
-
-      // 3. Obtener datos de sensores
-      const sensorDataRes = await axios.get(`http://localhost:3001/datos-generales/ultimo?t=${Date.now()}`)
-
-      console.log("Datos de sensores:", sensorDataRes.data)
-
-      if (sensorDataRes.data && sensorDataRes.data.data) {
+      if (sensorDataRes && sensorDataRes.data) {
         setSensorData({
-          temperatura: sensorDataRes.data.data.temperatura,
-          humedad: sensorDataRes.data.data.humedad,
-          lluvia: sensorDataRes.data.data.lluvia,
-          sol: sensorDataRes.data.data.sol,
-          fecha: sensorDataRes.data.data.fecha,
+          temperatura: sensorDataRes.data.temperatura,
+          humedad: sensorDataRes.data.humedad,
+          lluvia: sensorDataRes.data.lluvia,
+          sol: sensorDataRes.data.sol,
+          fecha: sensorDataRes.data.fecha,
         })
-      } else if (externalApiRes.data.sensores) {
-        // Usar datos de sensores de la API externa si no hay datos locales
+      } else {
+        // Si no hay datos de sensores, establecer valores predeterminados
         setSensorData({
-          temperatura: externalApiRes.data.sensores.temperatura,
-          humedad: externalApiRes.data.sensores.humedad,
-          lluvia: externalApiRes.data.sensores.lluvia,
-          sol: externalApiRes.data.sensores.sol,
+          temperatura: 0,
+          humedad: 0,
+          lluvia: 0,
+          sol: 0,
         })
       }
 
-      // Guardar todas las parcelas de la API externa
-      setParcelas(parcelasExternas)
-
       setLastUpdate(new Date().toLocaleTimeString())
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error al obtener datos:", err)
       setError(err.message || "Error al cargar los datos")
       setSensorData({
@@ -111,14 +101,7 @@ const Dashboard = () => {
 
   // Filtrar parcelas para excluir las eliminadas
   const filtrarParcelasActivas = () => {
-    // Si no hay parcelas eliminadas, devolver todas las parcelas
-    if (!parcelasEliminadas.length) return parcelas
-
-    // Crear un conjunto con los IDs de las parcelas eliminadas para búsqueda eficiente
-    const idsEliminados = new Set(parcelasEliminadas.map((p) => p.id))
-
-    // Filtrar las parcelas que no están en el conjunto de eliminadas
-    return parcelas.filter((parcela) => !idsEliminados.has(parcela.id))
+    return parcelas.filter((parcela) => parcela.is_deleted === 0)
   }
 
   if (isLoading) {

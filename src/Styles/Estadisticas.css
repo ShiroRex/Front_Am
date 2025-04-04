@@ -833,3 +833,327 @@
   }
 }
 
+/* Estilos para los controles de registros */
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: fadeIn 0.5s ease;
+}
+
+.records-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.records-selector span {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.records-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.records-buttons button {
+  padding: 0.6rem 1.2rem;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 30px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.records-buttons button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.6s;
+}
+
+.records-buttons button:hover {
+  background-color: #ffffff;
+  color: #0dd3e0;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.records-buttons button:hover::before {
+  left: 100%;
+}
+
+.records-buttons button.active {
+  background: var(--accent-gradient);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 6px 15px rgba(13, 211, 224, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.data-info {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.6rem 1rem;
+  border-radius: 30px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  transition: all var(--transition-fast);
+}
+
+.data-info:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .chart-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .records-selector {
+    width: 100%;
+  }
+
+  .records-buttons {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .records-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .data-info {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Añadir estos estilos para el nuevo gráfico de dona */
+.chart-card .doughnut-container {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-card .doughnut-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.chart-card .doughnut-center-text .value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.chart-card .doughnut-center-text .label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Estilos para las leyendas del gráfico de dona */
+.doughnut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.doughnut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.doughnut-legend-item i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.doughnut-legend-item.temperature i {
+  background-color: rgba(234, 84, 85, 0.7);
+}
+
+.doughnut-legend-item.humidity i {
+  background-color: rgba(0, 123, 255, 0.7);
+}
+
+.doughnut-legend-item.rain i {
+  background-color: rgba(40, 167, 69, 0.7);
+}
+
+.doughnut-legend-item.sun i {
+  background-color: rgba(255, 193, 7, 0.7);
+}
+
+/* Ajustes responsivos para el gráfico de dona */
+@media (max-width: 768px) {
+  .chart-card .doughnut-center-text .value {
+    font-size: 2rem;
+  }
+
+  .chart-card .doughnut-center-text .label {
+    font-size: 0.8rem;
+  }
+
+  .doughnut-legend {
+    gap: 0.75rem;
+  }
+
+  .doughnut-legend-item {
+    font-size: 0.8rem;
+  }
+}
+
+/* Añadir estos estilos para el nuevo gráfico de barras radiales */
+.radial-chart-wrapper {
+  position: relative;
+  height: 400px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radial-chart-wrapper canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Estilos para las leyendas del gráfico radial */
+.radial-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.radial-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.radial-legend-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.radial-legend-item i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.radial-legend-item.temperature i {
+  background-color: rgba(234, 84, 85, 0.8);
+}
+
+.radial-legend-item.humidity i {
+  background-color: rgba(0, 123, 255, 0.8);
+}
+
+.radial-legend-item.rain i {
+  background-color: rgba(40, 167, 69, 0.8);
+}
+
+.radial-legend-item.sun i {
+  background-color: rgba(255, 193, 7, 0.8);
+}
+
+/* Ajustes responsivos para el gráfico radial */
+@media (max-width: 768px) {
+  .radial-chart-wrapper {
+    height: 350px !important;
+  }
+
+  .radial-legend {
+    gap: 1rem;
+  }
+
+  .radial-legend-item {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .radial-chart-wrapper {
+    height: 300px !important;
+  }
+}
+
+/* Añadir estos estilos para el nuevo gráfico de área polar */
+.polar-chart-wrapper {
+  position: relative;
+  height: 400px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.polar-chart-wrapper canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Ajustes responsivos para el gráfico polar */
+@media (max-width: 768px) {
+  .polar-chart-wrapper {
+    height: 350px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .polar-chart-wrapper {
+    height: 300px !important;
+  }
+}
+
