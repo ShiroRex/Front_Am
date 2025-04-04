@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Info, Clock, BarChart2, Droplets, Thermometer, Sun } from 'lucide-react'
 import Sidebar from "../Components/Sidebar/Sidebar"
 import Header from "../Components/Header/Header"
 import Footer from "../Components/Footer/Footer"
 import CombinedCharts from "../Components/Graficos/Charts"
-import { Info } from "lucide-react"
-import "../Styles/Estadisticas.css"
 import { fetchAllData } from "../services/api"
+import "../Styles/Estadisticas.css"
 
 interface HistoricalData {
   id: number
@@ -38,7 +38,7 @@ const StatisticsPage = () => {
         setLoading(true)
         setError(null)
 
-        // Obtener todos los datos desde el nuevo endpoint
+        // Obtener todos los datos desde el endpoint
         const allData = await fetchAllData()
 
         // Extraer datos históricos
@@ -112,12 +112,13 @@ const StatisticsPage = () => {
     }
   }
 
-  // Función para cambiar la cantidad de registros a mostrar
-  const handleRecordsChange = (amount: number) => {
-    setRecordsToShow(amount)
-  }
-
   const { labels, temperatureData, humidityData, rainData, sunData } = processData()
+
+  // Colores en tonos amarillos para la aplicación
+  const primaryYellow = "rgba(217, 164, 0, 1)"; // #d9a400
+  const secondaryYellow = "rgba(247, 201, 72, 1)"; // #f7c948
+  const lightYellow = "rgba(255, 236, 179, 1)"; // #ffecb3
+  const accentTeal = "rgba(13, 211, 224, 1)"; // #0dd3e0
 
   const lineChartData = {
     labels,
@@ -125,20 +126,36 @@ const StatisticsPage = () => {
       {
         label: "Temperatura (°C)",
         data: temperatureData,
-        borderColor: "rgba(234, 84, 85, 1)",
-        backgroundColor: "rgba(234, 84, 85, 0.1)",
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 3,
+        borderColor: primaryYellow,
+        backgroundColor: "rgba(217, 164, 0, 0.1)",
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: primaryYellow,
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: primaryYellow,
+        pointHoverBorderWidth: 3,
+        fill: true,
       },
       {
         label: "Humedad (%)",
         data: humidityData,
-        borderColor: "rgba(0, 123, 255, 1)",
-        backgroundColor: "rgba(0, 123, 255, 0.1)",
-        tension: 0.3,
-        borderWidth: 2,
-        pointRadius: 3,
+        borderColor: accentTeal,
+        backgroundColor: "rgba(13, 211, 224, 0.1)",
+        tension: 0.4,
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: accentTeal,
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: accentTeal,
+        pointHoverBorderWidth: 3,
+        fill: true,
       },
     ],
   }
@@ -149,14 +166,24 @@ const StatisticsPage = () => {
       {
         label: "Lluvia (mm)",
         data: rainData,
-        backgroundColor: "rgba(40, 167, 69, 0.7)",
-        borderRadius: 4,
+        backgroundColor: "rgba(13, 211, 224, 0.8)",
+        borderColor: accentTeal,
+        borderWidth: 1,
+        borderRadius: 6,
+        hoverBackgroundColor: accentTeal,
+        barPercentage: 0.6,
+        categoryPercentage: 0.8,
       },
       {
         label: "Intensidad Solar (lux)",
         data: sunData,
-        backgroundColor: "rgba(255, 193, 7, 0.7)",
-        borderRadius: 4,
+        backgroundColor: "rgba(247, 201, 72, 0.8)",
+        borderColor: secondaryYellow,
+        borderWidth: 1,
+        borderRadius: 6,
+        hoverBackgroundColor: secondaryYellow,
+        barPercentage: 0.6,
+        categoryPercentage: 0.8,
       },
     ],
   }
@@ -165,15 +192,21 @@ const StatisticsPage = () => {
   const currentAvgTemp = temperatureData.length
     ? temperatureData.reduce((a, b) => a + b, 0) / temperatureData.length
     : 0
-  const currentAvgHum = humidityData.length ? humidityData.reduce((a, b) => a + b, 0) / humidityData.length : 0
-  const currentAvgRain = rainData.length ? rainData.reduce((a, b) => a + b, 0) / rainData.length : 0
-  const currentAvgSun = sunData.length ? sunData.reduce((a, b) => a + b, 0) / sunData.length : 0
+  const currentAvgHum = humidityData.length 
+    ? humidityData.reduce((a, b) => a + b, 0) / humidityData.length 
+    : 0
+  const currentAvgRain = rainData.length 
+    ? rainData.reduce((a, b) => a + b, 0) / rainData.length 
+    : 0
+  const currentAvgSun = sunData.length 
+    ? sunData.reduce((a, b) => a + b, 0) / sunData.length 
+    : 0
 
-  // Valores máximos para cada variable (podrían ser valores ideales o límites físicos)
+  // Valores máximos para cada variable
   const maxTemp = 40 // Temperatura máxima en °C
   const maxHum = 100 // Humedad máxima en %
   const maxRain = 50 // Lluvia máxima en mm
-  const maxSun = 100 // Intensidad solar máxima en lux (ajustado a la escala)
+  const maxSun = 100 // Intensidad solar máxima en lux
 
   // Datos para el gráfico de área polar
   const polarAreaData = {
@@ -181,19 +214,18 @@ const StatisticsPage = () => {
     datasets: [
       {
         data: [
-          // Convertimos a porcentajes para normalizar la visualización
           Number.parseFloat(((currentAvgTemp / maxTemp) * 100).toFixed(1)),
           Number.parseFloat(((currentAvgHum / maxHum) * 100).toFixed(1)),
           Number.parseFloat(((currentAvgRain / maxRain) * 100).toFixed(1)),
           Number.parseFloat(((currentAvgSun / maxSun) * 100).toFixed(1)),
         ],
         backgroundColor: [
-          "rgba(234, 84, 85, 0.7)", // Rojo para temperatura
-          "rgba(0, 123, 255, 0.7)", // Azul para humedad
-          "rgba(40, 167, 69, 0.7)", // Verde para lluvia
-          "rgba(255, 193, 7, 0.7)", // Amarillo para intensidad solar
+          primaryYellow, // Amarillo para temperatura
+          accentTeal, // Turquesa para humedad
+          "rgba(13, 211, 224, 0.7)", // Turquesa para lluvia
+          secondaryYellow, // Amarillo para intensidad solar
         ],
-        borderColor: ["rgba(234, 84, 85, 1)", "rgba(0, 123, 255, 1)", "rgba(40, 167, 69, 1)", "rgba(255, 193, 7, 1)"],
+        borderColor: [primaryYellow, accentTeal, accentTeal, secondaryYellow],
         borderWidth: 1,
         // Valores originales y máximos para mostrar en la leyenda y tooltips
         maxValues: [maxTemp, maxHum, maxRain, maxSun],
@@ -203,35 +235,6 @@ const StatisticsPage = () => {
           Number.parseFloat(currentAvgRain.toFixed(1)),
           Number.parseFloat(currentAvgSun.toFixed(1)),
         ],
-      },
-    ],
-  }
-
-  // Datos para el gráfico de radar (mantenemos por si se quiere volver a usar)
-  const radarChartData = {
-    labels: ["Temperatura (°C)", "Humedad (%)", "Lluvia (mm)", "Intensidad Solar (lux)"],
-    datasets: [
-      {
-        label: "Valores Actuales",
-        data: [currentAvgTemp, currentAvgHum, currentAvgRain, currentAvgSun],
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 2,
-        pointBackgroundColor: "rgba(54, 162, 235, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(54, 162, 235, 1)",
-      },
-      {
-        label: "Valores de Referencia",
-        data: [25, 60, 5, 50], // Valores de referencia
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 2,
-        pointBackgroundColor: "rgba(255, 99, 132, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(255, 99, 132, 1)",
       },
     ],
   }
@@ -249,7 +252,10 @@ const StatisticsPage = () => {
               <h1 className="estadisticas-title">Estadísticas</h1>
               <p className="estadisticas-description">Análisis detallado representado por graficos</p>
               <div className="last-update-container">
-                <span className="last-update">Última actualización: {lastUpdate}</span>
+                <span className="last-update">
+                  <Clock size={16} />
+                  Última actualización: {lastUpdate}
+                </span>
               </div>
             </div>
 
@@ -266,51 +272,67 @@ const StatisticsPage = () => {
               </div>
             ) : (
               <>
-                <div className="chart-controls">
-                  <div className="records-selector">
-                    <span>Mostrar últimos: </span>
-                    <div className="records-buttons">
-                      <button className={recordsToShow === 10 ? "active" : ""} onClick={() => handleRecordsChange(10)}>
-                        10
-                      </button>
-                      <button className={recordsToShow === 20 ? "active" : ""} onClick={() => handleRecordsChange(20)}>
-                        20
-                      </button>
-                      <button className={recordsToShow === 50 ? "active" : ""} onClick={() => handleRecordsChange(50)}>
-                        50
-                      </button>
-                      <button
-                        className={recordsToShow === 100 ? "active" : ""}
-                        onClick={() => handleRecordsChange(100)}
-                      >
-                        100
-                      </button>
-                      <button
-                        className={recordsToShow === historicalData.length ? "active" : ""}
-                        onClick={() => handleRecordsChange(historicalData.length)}
-                      >
-                        Todos
-                      </button>
-                    </div>
+                {/* Selector de registros mejorado */}
+                <div className="records-selector-container">
+                  <div className="records-selector-label">
+                    <BarChart2 size={18} />
+                    <span>Mostrar últimos:</span>
                   </div>
-                  <div className="data-info">
-                    <span>
-                      Mostrando {Math.min(recordsToShow, historicalData.length)} de {historicalData.length} registros
-                    </span>
+                  <div className="records-selector-buttons">
+                    <button 
+                      className={recordsToShow === 10 ? "active" : ""} 
+                      onClick={() => setRecordsToShow(10)}
+                    >
+                      10
+                    </button>
+                    <button 
+                      className={recordsToShow === 20 ? "active" : ""} 
+                      onClick={() => setRecordsToShow(20)}
+                    >
+                      20
+                    </button>
+                    <button 
+                      className={recordsToShow === 50 ? "active" : ""} 
+                      onClick={() => setRecordsToShow(50)}
+                    >
+                      50
+                    </button>
+                    <button 
+                      className={recordsToShow === 100 ? "active" : ""} 
+                      onClick={() => setRecordsToShow(100)}
+                    >
+                      100
+                    </button>
+                    <button 
+                      className={recordsToShow === historicalData.length ? "active" : ""} 
+                      onClick={() => setRecordsToShow(historicalData.length)}
+                    >
+                      Todos
+                    </button>
+                  </div>
+                  <div className="records-info">
+                    Mostrando {Math.min(recordsToShow, historicalData.length)} de {historicalData.length} registros
                   </div>
                 </div>
 
                 <div className="charts-grid">
+                  {/* Gráfica de Temperatura y Humedad */}
                   <div className="chart-card">
                     <div className="chart-header">
                       <div className="chart-title-container">
-                        <h3>Variación de Temperatura y Humedad</h3>
+                        <div className="chart-title-with-icon">
+                          <div className="chart-icon temperature-humidity-icon">
+                            <Thermometer size={20} />
+                            <Droplets size={20} />
+                          </div>
+                          <h3>Variación de Temperatura y Humedad</h3>
+                        </div>
                         <button
                           className="info-button"
                           onClick={() =>
                             handleInfoClick(
                               "temp-humidity",
-                              "Este gráfico muestra la variación de temperatura (°C) y humedad (%) a lo largo del tiempo. La temperatura se representa en rojo y la humedad en azul.",
+                              "Este gráfico muestra la variación de temperatura (°C) y humedad (%) a lo largo del tiempo. La temperatura se representa en amarillo y la humedad en turquesa."
                             )
                           }
                           aria-label="Información sobre el gráfico"
@@ -322,10 +344,10 @@ const StatisticsPage = () => {
                         )}
                       </div>
                       <div className="chart-legend">
-                        <span className="legend-temperature">
+                        <span className="legend-item temperature">
                           <i></i> Temperatura
                         </span>
-                        <span className="legend-humidity">
+                        <span className="legend-item humidity">
                           <i></i> Humedad
                         </span>
                       </div>
@@ -335,16 +357,23 @@ const StatisticsPage = () => {
                     </div>
                   </div>
 
+                  {/* Gráfica de Lluvia e Intensidad Solar */}
                   <div className="chart-card">
                     <div className="chart-header">
                       <div className="chart-title-container">
-                        <h3>Lluvia e Intensidad Solar</h3>
+                        <div className="chart-title-with-icon">
+                          <div className="chart-icon rain-sun-icon">
+                            <Droplets size={20} />
+                            <Sun size={20} />
+                          </div>
+                          <h3>Lluvia e Intensidad Solar</h3>
+                        </div>
                         <button
                           className="info-button"
                           onClick={() =>
                             handleInfoClick(
                               "rain-sun",
-                              "Este gráfico muestra la cantidad de lluvia (mm) y la intensidad solar (lux) registradas. La lluvia se representa en verde y la intensidad solar en amarillo.",
+                              "Este gráfico muestra la cantidad de lluvia (mm) y la intensidad solar (lux) registradas. La lluvia se representa en turquesa y la intensidad solar en amarillo."
                             )
                           }
                           aria-label="Información sobre el gráfico"
@@ -356,10 +385,10 @@ const StatisticsPage = () => {
                         )}
                       </div>
                       <div className="chart-legend">
-                        <span className="legend-rain">
+                        <span className="legend-item rain">
                           <i></i> Lluvia
                         </span>
-                        <span className="legend-sun">
+                        <span className="legend-item sun">
                           <i></i> Intensidad Solar
                         </span>
                       </div>
@@ -369,16 +398,22 @@ const StatisticsPage = () => {
                     </div>
                   </div>
 
+                  {/* Gráfico de área polar (tercera gráfica) */}
                   <div className="chart-card full-width">
                     <div className="chart-header">
                       <div className="chart-title-container">
-                        <h3>Niveles Actuales vs. Máximos</h3>
+                        <div className="chart-title-with-icon">
+                          <div className="chart-icon polar-icon">
+                            <BarChart2 size={20} />
+                          </div>
+                          <h3>Niveles Actuales vs. Máximos</h3>
+                        </div>
                         <button
                           className="info-button"
                           onClick={() =>
                             handleInfoClick(
                               "polar-area",
-                              "Este gráfico muestra los valores actuales de cada variable climática en relación con sus valores máximos. Cada sector representa el porcentaje del valor máximo alcanzado por cada variable.",
+                              "Este gráfico muestra los valores actuales de cada variable climática en relación con sus valores máximos. Cada sector representa el porcentaje del valor máximo alcanzado por cada variable."
                             )
                           }
                           aria-label="Información sobre el gráfico"
@@ -407,4 +442,3 @@ const StatisticsPage = () => {
 }
 
 export default StatisticsPage
-

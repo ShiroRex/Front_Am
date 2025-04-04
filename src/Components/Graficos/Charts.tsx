@@ -1,3 +1,5 @@
+"use client"
+
 import { Line, Bar, Radar, PolarArea } from "react-chartjs-2"
 import {
   Chart as ChartJS,
@@ -30,6 +32,7 @@ ChartJS.register(
   ChartDataLabels,
 )
 
+// Opciones mejoradas para los gráficos de línea y barras
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -48,7 +51,20 @@ const chartOptions = {
       },
       padding: 12,
       usePointStyle: true,
+      cornerRadius: 8,
+      displayColors: true,
+      boxPadding: 6,
+      callbacks: {
+        label: (context) => {
+          const label = context.dataset.label || '';
+          const value = context.parsed.y;
+          return `${label}: ${value.toFixed(1)}`;
+        }
+      }
     },
+    datalabels: {
+      display: false,
+    }
   },
   scales: {
     x: {
@@ -57,19 +73,61 @@ const chartOptions = {
       },
       ticks: {
         color: "#6c757d",
+        maxRotation: 45,
+        minRotation: 45,
+        font: {
+          size: 10,
+        },
+        autoSkip: true,
+        maxTicksLimit: 10,
+      },
+      border: {
+        color: "rgba(0, 0, 0, 0.1)",
       },
     },
     y: {
       grid: {
         color: "rgba(0, 0, 0, 0.05)",
+        drawBorder: false,
       },
       ticks: {
         color: "#6c757d",
+        font: {
+          size: 11,
+        },
+        padding: 8,
       },
+      border: {
+        dash: [4, 4],
+        color: "rgba(0, 0, 0, 0.1)",
+      },
+      beginAtZero: true,
     },
+  },
+  interaction: {
+    mode: 'index',
+    intersect: false,
+  },
+  hover: {
+    mode: 'index',
+    intersect: false,
+  },
+  elements: {
+    line: {
+      tension: 0.4,
+    },
+    point: {
+      radius: 3,
+      hoverRadius: 6,
+    },
+  },
+  animation: {
+    duration: 1000,
+    easing: 'easeOutQuart',
   },
 }
 
+// Opciones específicas para el gráfico de radar
 const radarOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -83,6 +141,10 @@ const radarOptions = {
         usePointStyle: true,
         pointStyle: "circle",
         color: "#495057",
+        font: {
+          size: 11,
+          weight: "500" as const,
+        },
       },
     },
     tooltip: {
@@ -96,7 +158,11 @@ const radarOptions = {
       },
       padding: 12,
       usePointStyle: true,
+      cornerRadius: 8,
     },
+    datalabels: {
+      display: false,
+    }
   },
   scales: {
     r: {
@@ -110,22 +176,42 @@ const radarOptions = {
         color: "#495057",
         font: {
           size: 12,
+          weight: "500" as const,
         },
       },
       ticks: {
         backdropColor: "transparent",
         color: "#6c757d",
+        font: {
+          size: 10,
+        },
       },
+      min: 0,
     },
+  },
+  elements: {
+    line: {
+      borderWidth: 2,
+    },
+    point: {
+      radius: 3,
+      hoverRadius: 6,
+      borderWidth: 2,
+    },
+  },
+  animation: {
+    duration: 1000,
+    easing: 'easeOutQuart',
   },
 }
 
+// Opciones específicas para el gráfico de área polar
 const polarAreaOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: "top" as const,
+      position: "right" as const,
       display: true,
       labels: {
         boxWidth: 15,
@@ -173,6 +259,7 @@ const polarAreaOptions = {
       },
       padding: 12,
       usePointStyle: true,
+      cornerRadius: 8,
       callbacks: {
         label: (context: any) => {
           const value = context.dataset.originalValues[context.dataIndex]
@@ -196,6 +283,7 @@ const polarAreaOptions = {
       },
       align: "center",
       anchor: "center",
+      textShadow: "0 2px 4px rgba(0,0,0,0.5)",
     },
   },
   scales: {
@@ -207,6 +295,9 @@ const polarAreaOptions = {
         color: "#6c757d",
         stepSize: 20,
         callback: (value: number) => value + "%",
+        font: {
+          size: 10,
+        },
       },
       grid: {
         color: "rgba(0, 0, 0, 0.05)",
@@ -214,22 +305,35 @@ const polarAreaOptions = {
       pointLabels: {
         color: "#495057",
         font: {
-          size: 14,
+          size: 12,
           weight: "bold",
         },
       },
     },
   },
+  animation: {
+    animateRotate: true,
+    animateScale: true,
+    duration: 1000,
+    easing: 'easeOutQuart',
+  },
 }
 
-export const LineChart = ({ data }: { data: any }) => <Line options={chartOptions} data={data} />
+export const LineChart = ({ data }: { data: any }) => (
+  <Line options={chartOptions} data={data} />
+)
 
-export const BarChart = ({ data }: { data: any }) => <Bar options={chartOptions} data={data} />
+export const BarChart = ({ data }: { data: any }) => (
+  <Bar options={chartOptions} data={data} />
+)
 
-export const RadarChart = ({ data }: { data: any }) => <Radar options={radarOptions} data={data} />
+export const RadarChart = ({ data }: { data: any }) => (
+  <Radar options={radarOptions} data={data} />
+)
 
-export const PolarAreaChart = ({ data }: { data: any }) => <PolarArea options={polarAreaOptions} data={data} />
+export const PolarAreaChart = ({ data }: { data: any }) => (
+  <PolarArea options={polarAreaOptions} data={data} />
+)
 
 const CombinedCharts = { Line: LineChart, Bar: BarChart, Radar: RadarChart, PolarArea: PolarAreaChart }
 export default CombinedCharts
-
