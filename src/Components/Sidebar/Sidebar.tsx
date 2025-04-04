@@ -2,14 +2,13 @@
 
 import type React from "react"
 
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useAuth } from "../../Context/AuthContext"
-import { LayoutDashboard, BarChart3, Trash, LogOut, Wheat } from "lucide-react"
+import { LayoutDashboard, BarChart3, Trash, LogOut, Wheat, Leaf } from "lucide-react"
 import "./sidebar.css"
 
 const Sidebar = () => {
   const { logout } = useAuth()
-  const navigate = useNavigate()
   const location = useLocation()
 
   const handleLogout = (e: React.MouseEvent) => {
@@ -46,6 +45,17 @@ const Sidebar = () => {
             </div>
             <span className="link-text">Estadísticas</span>
             {location.pathname === "/estadisticas" && <div className="active-indicator"></div>}
+          </Link>
+
+          <Link
+            to="/valoresOptimos"
+            className={`sidebar-link ${location.pathname === "/valoresOptimos" ? "active" : ""}`}
+          >
+            <div className="icon-container">
+              <Leaf className="nav-icon" />
+            </div>
+            <span className="link-text">Valores Óptimos</span>
+            {location.pathname === "/valoresOptimos" && <div className="active-indicator"></div>}
           </Link>
 
           <Link

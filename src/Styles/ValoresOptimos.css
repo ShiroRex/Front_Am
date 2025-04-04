@@ -1,0 +1,555 @@
+/* Estilos para la página de valores óptimos */
+:root {
+    --primary-gradient: linear-gradient(135deg, #d9a400, #f7c948);
+    --accent-gradient: linear-gradient(135deg, #0dd3e0, #2cc9ff);
+    --card-bg: #ffffff;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --border-radius: 16px;
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+  
+    /* Colores para los parámetros */
+    --color-temperature: #d9a400;
+    --color-humidity: #0dd3e0;
+    --color-rain: #0dd3e0;
+    --color-sun: #f7c948;
+    --color-ph: #8bc34a;
+  }
+  
+  /* Contenedor principal */
+  .valores-optimos-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1.5rem;
+    position: relative;
+  }
+  
+  /* Encabezado */
+  .valores-optimos-header {
+    margin-bottom: 2rem;
+    position: relative;
+  }
+  
+  .valores-optimos-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .valores-optimos-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  
+  /* Barra de búsqueda */
+  .search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1rem 1.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .search-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-gradient);
+    opacity: 0.7;
+  }
+  
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+    transition: all var(--transition-fast);
+  }
+  
+  .search-input-wrapper:focus-within {
+    box-shadow: 0 0 0 2px rgba(217, 164, 0, 0.3);
+    border-color: var(--color-temperature);
+  }
+  
+  .search-icon {
+    color: var(--text-secondary);
+    margin-right: 0.75rem;
+  }
+  
+  .search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    color: var(--text-primary);
+    outline: none;
+  }
+  
+  .search-results-count {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Contenedor de la cuadrícula de cultivos */
+  .cultivos-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Lista de cultivos */
+  .cultivos-list {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    height: fit-content;
+  }
+  
+  .cultivos-list-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .cultivos-list-title svg {
+    color: var(--color-temperature);
+  }
+  
+  .cultivos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  /* Tarjeta de cultivo */
+  .cultivo-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+  
+  .cultivo-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .cultivo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .cultivo-card:hover::before {
+    opacity: 1;
+  }
+  
+  .cultivo-card.active {
+    border-color: var(--color-temperature);
+    box-shadow: 0 0 0 2px rgba(217, 164, 0, 0.3);
+  }
+  
+  .cultivo-card.active::before {
+    opacity: 1;
+  }
+  
+  .cultivo-card-image {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(247, 250, 252, 0.8);
+    padding: 0.5rem;
+  }
+  
+  .cultivo-card-image img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  
+  .cultivo-card-content {
+    padding: 0.75rem;
+  }
+  
+  .cultivo-card-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  
+  .cultivo-card-params {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .cultivo-param {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  
+  .cultivo-param svg {
+    color: var(--color-temperature);
+  }
+  
+  /* Detalles del cultivo */
+  .cultivo-details {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cultivo-details::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--primary-gradient);
+    opacity: 0.7;
+  }
+  
+  .cultivo-details-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .cultivo-details-image {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(247, 250, 252, 0.8);
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .cultivo-details-image img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  
+  .cultivo-details-title h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .cultivo-details-cycle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+  
+  .cultivo-details-description {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  
+  .cultivo-details-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .cultivo-details-section-title::before {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 1.25rem;
+    background: var(--primary-gradient);
+    border-radius: 2px;
+  }
+  
+  /* Parámetros */
+  .cultivo-details-params {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .param-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-fast);
+  }
+  
+  .param-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .param-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 12px;
+    background: rgba(247, 250, 252, 0.8);
+  }
+  
+  .param-icon.temperature {
+    background: rgba(217, 164, 0, 0.1);
+    color: var(--color-temperature);
+  }
+  
+  .param-icon.humidity,
+  .param-icon.rain {
+    background: rgba(13, 211, 224, 0.1);
+    color: var(--color-humidity);
+  }
+  
+  .param-icon.sun {
+    background: rgba(247, 201, 72, 0.1);
+    color: var(--color-sun);
+  }
+  
+  .param-icon.ph {
+    background: rgba(139, 195, 74, 0.1);
+    color: var(--color-ph);
+  }
+  
+  .param-content {
+    flex: 1;
+  }
+  
+  .param-content h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+  }
+  
+  .param-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  
+  /* Recomendaciones */
+  .cultivo-details-recommendations {
+    background: rgba(247, 250, 252, 0.8);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .recommendations-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .recommendations-list li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  
+  .recommendations-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--color-temperature);
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+  
+  /* Placeholder cuando no hay cultivo seleccionado */
+  .cultivo-details-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    min-height: 400px;
+    padding: 2rem;
+  }
+  
+  .placeholder-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: rgba(217, 164, 0, 0.1);
+    color: var(--color-temperature);
+    margin-bottom: 1.5rem;
+  }
+  
+  .cultivo-details-placeholder h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+  
+  .cultivo-details-placeholder p {
+    color: var(--text-secondary);
+    max-width: 400px;
+    line-height: 1.6;
+  }
+  
+  /* Responsive */
+  @media (max-width: 992px) {
+    .cultivos-grid-container {
+      grid-template-columns: 1fr;
+    }
+  
+    .cultivos-grid {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+  
+    .cultivo-details-params {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .search-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  
+    .search-input-wrapper {
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .search-results-count {
+      width: 100%;
+      text-align: center;
+    }
+  
+    .cultivo-details-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .valores-optimos-title {
+      font-size: 1.75rem;
+    }
+  
+    .cultivos-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .cultivo-details {
+      padding: 1.5rem;
+    }
+  
+    .cultivo-details-params {
+      grid-template-columns: 1fr;
+    }
+  
+    .param-card {
+      padding: 0.75rem;
+    }
+  
+    .param-value {
+      font-size: 1.1rem;
+    }
+  }
+  
+  /* Animaciones */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .cultivo-card,
+  .param-card {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  
