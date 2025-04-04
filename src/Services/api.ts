@@ -99,7 +99,7 @@ export const isAuthenticated = () => {
   return localStorage.getItem("token") !== null
 }
 
-// Nuevo método para obtener todos los datos desde el endpoint /api/dump
+// Función para obtener todos los datos desde el endpoint /api/dump
 export const fetchAllData = async () => {
   try {
     const response = await api.get("/api/dump")
@@ -121,36 +121,42 @@ export const getParcelas = async () => {
   }
 }
 
-// Modificar la función fetchDatosGenerales para extraer correctamente los datos de sensores
+// Modificar la función fetchDatosGenerales para siempre devolver valores 0 cuando no hay datos
 export const fetchDatosGenerales = async () => {
   try {
-    // Intentamos obtener los datos del último sensor desde el endpoint /api/dump
-    const data = await fetchAllData()
+    // Intentamos obtener los datos directamente del endpoint específico
+    const response = await api.get("/api/datos-generales")
+    const data = response.data
 
-    // Verificamos si hay datos históricos para extraer el último registro
-    if (data && data.historico && data.historico.length > 0) {
-      // Ordenamos por fecha descendente y tomamos el primer registro (el más reciente)
-      const sortedHistorico = [...data.historico].sort(
-        (a, b) => new Date(b.fecha_registro).getTime() - new Date(a.fecha_registro).getTime(),
-      )
-
-      const ultimoRegistro = sortedHistorico[0]
-
-      return {
-        data: {
-          temperatura: Number(ultimoRegistro.temperatura),
-          humedad: Number(ultimoRegistro.humedad),
-          lluvia: Number(ultimoRegistro.lluvia),
-          sol: Number(ultimoRegistro.sol),
-          fecha: ultimoRegistro.fecha_registro,
-        },
-      }
+    // Verificar que los datos sean válidos
+    if (data && data.data) {
+      return data
     }
 
-    return null
+    // Si no hay datos válidos, devolver valores 0
+    return {
+      status: "success",
+      data: {
+        temperatura: 0,
+        humedad: 0,
+        lluvia: 0,
+        sol: 0,
+        fecha: new Date().toISOString(),
+      },
+    }
   } catch (error) {
-    console.error("Error fetching data:", error)
-    return null
+    console.error("Error al obtener datos generales:", error)
+    // En caso de error, devolver un objeto con valores 0
+    return {
+      status: "error",
+      data: {
+        temperatura: 0,
+        humedad: 0,
+        lluvia: 0,
+        sol: 0,
+        fecha: new Date().toISOString(),
+      },
+    }
   }
 }
 
