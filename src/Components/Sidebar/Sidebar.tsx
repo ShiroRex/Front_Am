@@ -4,7 +4,7 @@ import type React from "react"
 
 import { Link, useLocation } from "react-router-dom"
 import { useAuth } from "../../Context/AuthContext"
-import { LayoutDashboard, BarChart3, Trash, LogOut, Wheat, Leaf } from "lucide-react"
+import { LayoutDashboard, BarChart3, Trash, LogOut, Wheat, Leaf, Droplet } from "lucide-react"
 import "./sidebar.css"
 
 const Sidebar = () => {
@@ -56,6 +56,14 @@ const Sidebar = () => {
             </div>
             <span className="link-text">Valores Óptimos</span>
             {location.pathname === "/valoresOptimos" && <div className="active-indicator"></div>}
+          </Link>
+
+          <Link to="/zonasRiego" className={`sidebar-link ${location.pathname === "/zonasRiego" ? "active" : ""}`}>
+            <div className="icon-container">
+              <Droplet className="nav-icon" />
+            </div>
+            <span className="link-text">Zonas de Riego</span>
+            {location.pathname === "/zonasRiego" && <div className="active-indicator"></div>}
           </Link>
 
           <Link

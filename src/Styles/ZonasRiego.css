@@ -1,0 +1,574 @@
+/* Estilos para la página de Zonas de Riego */
+:root {
+  --primary-gradient: linear-gradient(135deg, #d9a400, #f7c948);
+  --accent-gradient: linear-gradient(135deg, #0dd3e0, #2cc9ff);
+  --card-bg: #ffffff;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --border-radius: 16px;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+
+  /* Colores para estados */
+  --estado-encendido: #4caf50;
+  --estado-apagado: #607d8b;
+  --estado-mantenimiento: #ffc107;
+  --estado-descompuesto: #f44336;
+  --estado-fuera-de-servicio: #9c27b0;
+}
+
+/* Contenedor principal */
+.zonas-riego-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+/* Encabezado */
+.zonas-riego-header {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.zonas-riego-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.zonas-riego-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.last-update-container {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.last-update {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Tabs de navegación */
+.zonas-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tab-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+.tab-button.active {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Contenido de las tabs */
+.tab-content {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  min-height: 500px;
+}
+
+/* Mapa de zonas */
+.mapa-zonas-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 1.5rem;
+  height: 600px;
+}
+
+.mapa-wrapper {
+  position: relative;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el contenedor de Mapbox */
+.mapbox-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* Estilos para los marcadores de Mapbox */
+.mapbox-marker {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  border: 2px solid white;
+  color: white;
+  font-weight: bold;
+  font-size: 0.7rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.mapbox-marker:hover {
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mapbox-marker.selected {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 3px white, 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+/* Panel de detalles de zona */
+.zona-details-panel {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.zona-details-header {
+  padding: 1.25rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.zona-details-header h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.zona-sector {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.zona-details-content {
+  padding: 1.25rem;
+  flex: 1;
+}
+
+.zona-detail-item {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-icon {
+  color: var(--text-secondary);
+}
+
+.zona-details-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.zona-details-placeholder svg {
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Estados */
+.estado-encendido {
+  color: var(--estado-encendido);
+}
+
+.estado-apagado {
+  color: var(--estado-apagado);
+}
+
+.estado-mantenimiento {
+  color: var(--estado-mantenimiento);
+}
+
+.estado-descompuesto {
+  color: var(--estado-descompuesto);
+}
+
+.estado-fuera_de_servicio {
+  color: var(--estado-fuera-de-servicio);
+}
+
+/* Zonas con problemas */
+.zonas-problemas-container {
+  padding: 1rem 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.problemas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.problema-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.problema-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.problema-card-header {
+  padding: 1rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.problema-card-header h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.25rem;
+}
+
+.problema-card-content {
+  padding: 1rem;
+}
+
+.problema-estado {
+  margin-bottom: 1rem;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+}
+
+.estado-badge.estado-mantenimiento {
+  background-color: var(--estado-mantenimiento);
+}
+
+.estado-badge.estado-descompuesto {
+  background-color: var(--estado-descompuesto);
+}
+
+.estado-badge.estado-fuera_de_servicio {
+  background-color: var(--estado-fuera-de-servicio);
+}
+
+.problema-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.problema-detail .detail-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-right: 0.25rem;
+}
+
+.problema-detail .detail-value {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.no-problemas-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Estadísticas */
+.zonas-estadisticas-container {
+  padding: 1rem 0;
+}
+
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
+}
+
+.estadisticas-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+  height: 300px;
+  margin-top: 1rem;
+}
+
+.resumen-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.resumen-item {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+}
+
+.resumen-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.resumen-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resumen-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.tipos-riego-container {
+  margin-top: 2rem;
+}
+
+.tipos-riego-container h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.tipos-riego-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.tipo-riego-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.tipo-icon {
+  color: var(--color-humidity);
+}
+
+.tipo-nombre {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.tipo-cantidad {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-left: auto;
+}
+
+/* Estados de carga y error */
+.zonas-loading,
+.zonas-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(13, 211, 224, 0.2);
+  border-radius: 50%;
+  border-top-color: #0dd3e0;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.zonas-error {
+  padding: 2rem;
+  text-align: center;
+}
+
+.zonas-error h3 {
+  color: var(--estado-descompuesto);
+  margin-bottom: 1rem;
+}
+
+.zonas-error button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.zonas-error button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(13, 211, 224, 0.25);
+}
+
+/* Animaciones */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .mapa-zonas-container {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .mapa-wrapper {
+    height: 400px;
+  }
+
+  .estadisticas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .zonas-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .problemas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .zonas-riego-title {
+    font-size: 1.75rem;
+  }
+
+  .resumen-container {
+    grid-template-columns: 1fr;
+  }
+
+  .tipos-riego-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

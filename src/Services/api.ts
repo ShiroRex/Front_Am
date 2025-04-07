@@ -121,16 +121,57 @@ export const getParcelas = async () => {
   }
 }
 
-// Modificar la función fetchDatosGenerales para siempre devolver valores 0 cuando no hay datos
+// Modificar la función fetchDatosGenerales para obtener datos directamente de la API externa
 export const fetchDatosGenerales = async () => {
   try {
     // Intentamos obtener los datos directamente del endpoint específico
     const response = await api.get("/api/datos-generales")
     const data = response.data
 
+    console.log("Datos recibidos de /api/datos-generales:", data)
+
     // Verificar que los datos sean válidos
     if (data && data.data) {
-      return data
+      // Asegurarse de que todos los valores sean números válidos
+      const temperatura =
+        typeof data.data.temperatura === "number"
+          ? data.data.temperatura
+          : typeof data.data.temperatura === "string"
+            ? Number.parseFloat(data.data.temperatura)
+            : 0
+
+      const humedad =
+        typeof data.data.humedad === "number"
+          ? data.data.humedad
+          : typeof data.data.humedad === "string"
+            ? Number.parseFloat(data.data.humedad)
+            : 0
+
+      const lluvia =
+        typeof data.data.lluvia === "number"
+          ? data.data.lluvia
+          : typeof data.data.lluvia === "string"
+            ? Number.parseFloat(data.data.lluvia)
+            : 0
+
+      const sol =
+        typeof data.data.sol === "number"
+          ? data.data.sol
+          : typeof data.data.sol === "string"
+            ? Number.parseFloat(data.data.sol)
+            : 0
+
+      return {
+        status: data.status,
+        data: {
+          temperatura: isNaN(temperatura) ? 0 : temperatura,
+          humedad: isNaN(humedad) ? 0 : humedad,
+          lluvia: isNaN(lluvia) ? 0 : lluvia,
+          sol: isNaN(sol) ? 0 : sol,
+          fecha: data.data.fecha || new Date().toISOString(),
+        },
+        source: data.source,
+      }
     }
 
     // Si no hay datos válidos, devolver valores 0
@@ -199,6 +240,28 @@ export const crearLecturaSensor = async (data: any) => {
   } catch (error) {
     console.error("Error creando lectura de sensor", error)
     throw error
+  }
+}
+
+// Modificar la función fetchZonasRiego para usar el endpoint local del backend
+export const fetchZonasRiego = async () => {
+  try {
+    // Usar el endpoint local que emula los datos de la API externa
+    console.log("Obteniendo datos de zonas de riego desde el backend local")
+    const response = await api.get("/api/zonas-riego")
+
+    if (response.data && response.data.data && Array.isArray(response.data.data)) {
+      console.log("Datos obtenidos correctamente del backend:", response.data.data)
+      return response.data.data
+    } else {
+      console.error("Estructura de datos inesperada:", response.data)
+      throw new Error("La estructura de datos recibida del backend no es válida")
+    }
+  } catch (error) {
+    console.error("Error al obtener datos de zonas de riego:", error)
+
+    // Si todo falla, propagar el error
+    throw new Error("No se pudieron obtener datos de zonas de riego")
   }
 }
 

@@ -1,5 +1,4 @@
 "use client"
-
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom"
 import Login from "./Pages/Login"
 import Register from "./Pages/Register"
@@ -8,6 +7,7 @@ import "./App.css"
 import Estadisticas from "./Pages/Estadisticas"
 import ParcelasEliminadas from "./Pages/ParcelasEliminadas"
 import ValoresOptimos from "./Pages/ValoresOptimos"
+import ZonasRiego from "./Pages/ZonasRiego"
 import { AuthProvider, useAuth } from "./Context/AuthContext"
 
 // Componente para redirigir a login si no está autenticado
@@ -65,6 +65,15 @@ const App = () => {
             element={
               <RequireAuth>
                 <ValoresOptimos />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/zonasRiego"
+            element={
+              <RequireAuth>
+                <ZonasRiego />
               </RequireAuth>
             }
           />
