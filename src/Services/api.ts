@@ -243,24 +243,41 @@ export const crearLecturaSensor = async (data: any) => {
   }
 }
 
-// Modificar la función fetchZonasRiego para usar el endpoint local del backend
+// Modificar la función fetchZonasRiego para adaptarse al formato de la API externa
 export const fetchZonasRiego = async () => {
   try {
     // Usar el endpoint local que emula los datos de la API externa
-    console.log("Obteniendo datos de zonas de riego desde el backend local")
-    const response = await api.get("/api/zonas-riego")
+    // Agregar parámetros aleatorios para evitar caché
+    const timestamp = new Date().getTime()
+    const noCacheParam = Math.random().toString(36).substring(2, 15)
 
-    if (response.data && response.data.data && Array.isArray(response.data.data)) {
-      console.log("Datos obtenidos correctamente del backend:", response.data.data)
-      return response.data.data
+    console.log("Obteniendo datos de zonas de riego desde el backend local")
+
+    const response = await api.get(`/api/zonas-riego?t=${timestamp}&nocache=${noCacheParam}`, {
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    })
+
+    // Verificar que la respuesta tenga el formato esperado (como la API externa)
+    if (response.data && response.data.zonas && Array.isArray(response.data.zonas)) {
+      console.log("Datos obtenidos correctamente del backend:", response.data.zonas)
+
+      // Verificar si hay una zona TEST y mostrar su color
+      const zonaTest = response.data.zonas.find((zona) => zona.sector === "TEST")
+      if (zonaTest) {
+        console.log(`Zona TEST encontrada - Color actual: ${zonaTest.color}`)
+      }
+
+      return response.data.zonas
     } else {
       console.error("Estructura de datos inesperada:", response.data)
       throw new Error("La estructura de datos recibida del backend no es válida")
     }
   } catch (error) {
     console.error("Error al obtener datos de zonas de riego:", error)
-
-    // Si todo falla, propagar el error
     throw new Error("No se pudieron obtener datos de zonas de riego")
   }
 }

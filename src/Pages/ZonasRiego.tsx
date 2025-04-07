@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-import { MapPin, Droplet, AlertTriangle, Info, Calendar, PenToolIcon as Tool } from "lucide-react"
+import { MapPin, Droplet, AlertTriangle, Info, Calendar, PenToolIcon as Tool, RefreshCw } from "lucide-react"
 import Sidebar from "../Components/Sidebar/Sidebar"
 import Header from "../Components/Header/Header"
 import Footer from "../Components/Footer/Footer"
@@ -46,6 +46,47 @@ const ESTADO_COLORS: Record<string, string> = {
   fuera_de_servicio: "#9C27B0",
 }
 
+// Función para verificar si las coordenadas están demasiado cerca
+const ajustarCoordenadas = (zonas: ZonaRiego[]): ZonaRiego[] => {
+  // Si hay menos de 2 zonas, no es necesario ajustar
+  if (zonas.length < 2) return zonas
+
+  const zonasAjustadas = [...zonas]
+  const distanciaMinima = 0.001 // Aproximadamente 100 metros
+
+  // Verificar cada par de zonas
+  for (let i = 0; i < zonasAjustadas.length; i++) {
+    for (let j = i + 1; j < zonasAjustadas.length; j++) {
+      const zonaA = zonasAjustadas[i]
+      const zonaB = zonasAjustadas[j]
+
+      // Si alguna zona no tiene coordenadas, continuar
+      if (!zonaA.latitud || !zonaA.longitud || !zonaB.latitud || !zonaB.longitud) continue
+
+      // Calcular distancia entre puntos
+      const dx = zonaA.longitud - zonaB.longitud
+      const dy = zonaA.latitud - zonaB.latitud
+      const distancia = Math.sqrt(dx * dx + dy * dy)
+
+      // Si están demasiado cerca, ajustar la segunda zona
+      if (distancia < distanciaMinima) {
+        // Calcular ángulo aleatorio para dispersar
+        const angulo = Math.random() * Math.PI * 2
+        const distanciaAjuste = distanciaMinima + Math.random() * 0.001
+
+        // Ajustar coordenadas de la segunda zona
+        zonasAjustadas[j] = {
+          ...zonaB,
+          longitud: zonaB.longitud + Math.cos(angulo) * distanciaAjuste,
+          latitud: zonaB.latitud + Math.sin(angulo) * distanciaAjuste,
+        }
+      }
+    }
+  }
+
+  return zonasAjustadas
+}
+
 const ZonasRiego = () => {
   const [zonas, setZonas] = useState<ZonaRiego[]>([])
   const [selectedZona, setSelectedZona] = useState<ZonaRiego | null>(null)
@@ -69,7 +110,9 @@ const ZonasRiego = () => {
         console.log("Zonas de riego:", zonasData)
 
         if (zonasData && zonasData.length > 0) {
-          setZonas(zonasData)
+          // Ajustar coordenadas para evitar superposición
+          const zonasAjustadas = ajustarCoordenadas(zonasData)
+          setZonas(zonasAjustadas)
         } else {
           setError("No se encontraron zonas de riego")
         }
@@ -84,7 +127,7 @@ const ZonasRiego = () => {
     }
 
     fetchData()
-  }, [])
+  }, []) // Solo cargar una vez al montar el componente
 
   // Inicializar el mapa cuando se cargan las zonas y el componente está montado
   useEffect(() => {
@@ -100,24 +143,25 @@ const ZonasRiego = () => {
       return
     }
 
-    // Calcular el centro del mapa (promedio de todas las coordenadas)
-    const center = validZonas.reduce(
-      (acc, zona) => {
-        acc[0] += zona.longitud || 0
-        acc[1] += zona.latitud || 0
-        return acc
-      },
-      [0, 0],
-    )
-    center[0] /= validZonas.length
-    center[1] /= validZonas.length
+    // Modificar la parte donde se calculan las coordenadas para el centro del mapa
+    // para asegurar que los marcadores no estén demasiado juntos
 
-    // Inicializar el mapa
+    // Calcular el centro del mapa y los límites para ajustar el zoom
+    const bounds = new mapboxgl.LngLatBounds()
+
+    validZonas.forEach((zona) => {
+      if (zona.longitud && zona.latitud) {
+        bounds.extend([zona.longitud, zona.latitud])
+      }
+    })
+
+    // Inicializar el mapa con los límites calculados
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/satellite-streets-v12", // Estilo de mapa satelital con calles
-      center: center as [number, number],
-      zoom: 15, // Nivel de zoom adecuado para ver parcelas agrícolas
+      style: "mapbox://styles/mapbox/streets-v12", // Estilo más similar a la imagen
+      bounds: bounds,
+      padding: 50,
+      fitBoundsOptions: { padding: 100 },
     })
 
     // Añadir controles de navegación
@@ -157,11 +201,27 @@ const ZonasRiego = () => {
       // Crear elemento HTML personalizado para el marcador
       const el = document.createElement("div")
       el.className = "mapbox-marker"
-      el.style.backgroundColor = zona.color
-      el.innerHTML = `<span>${zona.sector}</span>`
+
+      // Verificar si es la zona TEST y mostrar su color
+      if (zona.sector === "TEST") {
+        console.log(`Renderizando zona TEST con color: ${zona.color}`)
+      }
+
+      // Crear SVG para el pin con el color específico de la zona
+      // Asegurarse de que el color se tome directamente de la API sin modificaciones
+      const pinSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36" fill="${zona.color}" stroke="black" strokeWidth="2">
+  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+</svg>
+`
+
+      // Establecer el SVG como fondo
+      el.style.backgroundImage = `url('data:image/svg+xml;charset=UTF-8,${encodeURIComponent(pinSvg)}')`
+
+      // Añadir el sector como texto dentro del marcador
+      el.innerHTML += `<span>${zona.sector}</span>`
       el.title = zona.nombre
 
-      // Añadir clase si está seleccionado
       if (selectedZona?.id === zona.id) {
         el.classList.add("selected")
       }
@@ -270,11 +330,56 @@ const ZonasRiego = () => {
             <div className="zonas-riego-header">
               <h1 className="zonas-riego-title">Zonas de Riego</h1>
               <p className="zonas-riego-description">Monitoreo y gestión de zonas de riego automatizado</p>
+              {/* Modificar el botón de recarga para que sea más visible y funcional */}
               <div className="last-update-container">
                 <span className="last-update">
                   <Calendar size={16} />
                   Última actualización: {lastUpdate}
                 </span>
+                <button
+                  className="refresh-button"
+                  onClick={() => {
+                    setIsLoading(true)
+                    // Forzar recarga completa de los datos
+                    fetchZonasRiego()
+                      .then((data) => {
+                        if (data && data.length > 0) {
+                          console.log("Datos recargados correctamente:", data)
+                          // Buscar la zona TEST para verificar su color
+                          const zonaTest = data.find((zona) => zona.sector === "TEST")
+                          if (zonaTest) {
+                            console.log(`Zona TEST recargada - Color: ${zonaTest.color}`)
+                          }
+
+                          const zonasAjustadas = ajustarCoordenadas(data)
+                          setZonas(zonasAjustadas)
+
+                          // Forzar recreación de marcadores
+                          if (map.current) {
+                            // Limpiar marcadores existentes
+                            Object.values(markers.current).forEach((marker) => marker.remove())
+                            markers.current = {}
+
+                            // Recrear marcadores con los nuevos datos
+                            setTimeout(() => {
+                              addMarkersToMap()
+                            }, 100)
+                          }
+
+                          setLastUpdate(new Date().toLocaleString())
+                        }
+                      })
+                      .catch((err) => {
+                        console.error("Error al recargar:", err)
+                        setError(err.message || "Error al recargar los datos")
+                      })
+                      .finally(() => {
+                        setIsLoading(false)
+                      })
+                  }}
+                >
+                  <RefreshCw size={16} /> Recargar datos
+                </button>
               </div>
             </div>
 

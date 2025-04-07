@@ -135,30 +135,34 @@
 
 /* Estilos para los marcadores de Mapbox */
 .mapbox-marker {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
-  border: 2px solid white;
-  color: white;
-  font-weight: bold;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5)); /* Sombra más pronunciada */
+}
+
+.mapbox-marker span {
   font-size: 0.7rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 3px rgba(0, 0, 0, 0.5); /* Texto más legible */
 }
 
 .mapbox-marker:hover {
   transform: scale(1.2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
 }
 
 .mapbox-marker.selected {
   transform: scale(1.3);
-  box-shadow: 0 0 0 3px white, 0 4px 8px rgba(0, 0, 0, 0.3);
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.7));
   z-index: 10;
 }
 
@@ -570,5 +574,64 @@
   .tipos-riego-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Agregar estilos para el selector de color */
+.color-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.color-selector label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.color-selector input[type="color"] {
+  width: 2rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Mejorar el estilo del botón de recarga */
+.refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: white;
+  background: var(--primary-gradient);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  border: none;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.refresh-button:hover {
+  background: linear-gradient(135deg, #f7c948, #d9a400);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.refresh-button:active {
+  transform: translateY(0);
+}
+
+/* Mejorar la visibilidad del borde del marcador */
+.mapbox-marker svg {
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
